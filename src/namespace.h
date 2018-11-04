@@ -34,8 +34,10 @@ struct Xform {
 };
 
 struct BoardParams {
-	uint w;
-	uint h;
+	unsigned long quality;
+	unsigned iterations;
+	unsigned w;
+	unsigned h;
 	float proj[3][3];
 	Vec3<float> affine;
 	Vec3<float> palette[256];

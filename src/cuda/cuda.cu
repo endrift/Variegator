@@ -10,9 +10,6 @@ static VG_INLINE uint rand32() {
 }
 #include "variations.h"
 
-#define K1 1
-#define K2 (1.f/8)
-
 namespace Variegator {
 
 namespace Cuda {
@@ -90,11 +87,13 @@ __device__ void update_board(BoardParams* params, Vec3<T>* points, float4* board
 
 template<typename U>
 __global__ void flatten_board(BoardParams* params, float4* board, U* out) {
+	float k2 = 1.f / params->quality;
+	float k1 = 1.f;
 	for (unsigned y = threadIdx.x * params->h / blockDim.x; y < (threadIdx.x + 1) * params->h / blockDim.x; ++y) {
 		for (unsigned x = 0; x < params->w; ++x) {
 			float4 dot = board[x + y * params->w];
 			unsigned maxv = 0xFFFFFFFFU >> (32 - 8 * sizeof(U));
-			float alpha = log1pf(dot.w * K1 / QUALITY) * K2 * maxv;
+			float alpha = log10f(dot.w * k2 + 1) * k1 * maxv;
 			out[4 * (x + y * params->w) + 3] = min(maxv, (uint) alpha);
 			alpha /= dot.w + 1.f;
 			out[4 * (x + y * params->w) + 0] = min(maxv, (uint) (dot.x * alpha));

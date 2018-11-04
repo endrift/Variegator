@@ -4,8 +4,6 @@
 #define POINTS 4
 #define N 1024
 #define BLOCKS 16
-#define ITERATIONS 4096
-#define QUALITY 500
 
 namespace Variegator {
 namespace Cuda {
