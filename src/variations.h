@@ -10,11 +10,11 @@ struct Variations {
 	}
 
 	static VG_INLINE Vec3<T> sinusoidal(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		return { sinf(point.x), sinf(point.y) };
+		return { sin(point.x), sin(point.y) };
 	}
 
 	static VG_INLINE Vec3<T> sinusoidal3D(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		return { sinf(point.x), sinf(point.y), sinf(point.z) };
+		return { sin(point.x), sin(point.y), sin(point.z) };
 	}
 
 	static VG_INLINE Vec3<T> spherical(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
@@ -29,61 +29,61 @@ struct Variations {
 
 	static VG_INLINE Vec3<T> swirl(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
 		T r2 = point.x * point.x + point.y * point.y;
-		T c = cosf(r2);
-		T s = sinf(r2);
+		T c = cos(r2);
+		T s = sin(r2);
 		return { point.x * s - point.y * c, point.x * c + point.y * s };
 	}
 
 	static VG_INLINE Vec3<T> horseshoe(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
+		T r = sqrt(point.x * point.x + point.y * point.y);
 		return { (point.x - point.y) * (point.x + point.y) / r, 2 * point.x * point.y / r };
 	}
 
 	static VG_INLINE Vec3<T> polar(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
 		return { theta / (T) M_PI, r - 1 };
 	}
 
 	static VG_INLINE Vec3<T> handkerchief(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { r * sinf(theta + r), r * cosf(theta - r) };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { r * sin(theta + r), r * cos(theta - r) };
 	}
 
 	static VG_INLINE Vec3<T> heart(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { r * sinf(theta * r), -cosf(theta * r) };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { r * sin(theta * r), -cos(theta * r) };
 	}
 
 	static VG_INLINE Vec3<T> disc(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { theta / (T) M_PI * sinf((T) M_PI * r), theta / (T) M_PI * cosf((T) M_PI * r) };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { theta / (T) M_PI * sin((T) M_PI * r), theta / (T) M_PI * cos((T) M_PI * r) };
 	}
 
 	static VG_INLINE Vec3<T> spiral(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { (cosf(theta) + sinf(r)) / r, (sinf(theta) - cosf(r)) / r };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { (cos(theta) + sin(r)) / r, (sin(theta) - cos(r)) / r };
 	}
 
 	static VG_INLINE Vec3<T> hyperbolic(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { sinf(theta) / r, r * cosf(theta) };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { sin(theta) / r, r * cos(theta) };
 	}
 
 	static VG_INLINE Vec3<T> diamond(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
-		return { sinf(theta) * cosf(r), cosf(theta) * sinf(r) };
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
+		return { sin(theta) * cos(r), cos(theta) * sin(r) };
 	}
 
 	static VG_INLINE Vec3<T> ex(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = sqrtf(point.x * point.x + point.y * point.y);
-		T theta = atan2f(point.x, point.y);
+		T r = sqrt(point.x * point.x + point.y * point.y);
+		T theta = atan2(point.x, point.y);
 		T p0 = sin(theta + r);
 		T p1 = cos(theta - r);
 		p0 *= p0 * p0;
@@ -92,14 +92,18 @@ struct Variations {
 	}
 
 	static VG_INLINE Vec3<T> julia(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
-		T r = powf(point.x * point.x + point.y * point.y, .25f);
-		T theta = atan2f(point.x, point.y);
+		T r = pow(point.x * point.x + point.y * point.y, .25f);
+		T theta = atan2(point.x, point.y);
 		T omega = (rand32() & 1) * (T) M_PI;
 		return { r * cos(theta / 2 + omega), r * sin(theta / 2 + omega) };
 	}
 
 	static VG_INLINE Vec3<T> bent(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
 		return { point.x >= 0 ? point.x : 2 * point.x, point.y >= 0 ? point.y : point.y / 2 };
+	}
+
+	static VG_INLINE Vec3<T> waves(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		return { point.x + x->mtx[0].y * sin(point.y / (x->affine.x * x->affine.x)), point.y + x->mtx[1].y * sin(point.x / (x->affine.y * x->affine.y)) };
 	}
 
 	typedef Vec3<T> (* Fn)(Xform<T>*, Variation<T>*, Vec3<T>);
@@ -120,7 +124,7 @@ struct Variations {
 			ex,
 			julia,
 			bent,
-			// waves,
+			waves,
 			// fisheye,
 			// popcorn,
 			// exponential,
