@@ -106,6 +106,31 @@ struct Variations {
 		return { point.x + x->mtx[0].y * sin(point.y / (x->affine.x * x->affine.x)), point.y + x->mtx[1].y * sin(point.x / (x->affine.y * x->affine.y)) };
 	}
 
+	static VG_INLINE Vec3<T> fisheye(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		T r = 2 / (sqrt(point.x * point.x + point.y * point.y) + 1);
+		return { r * point.y, r * point.x };
+	}
+
+	static VG_INLINE Vec3<T> popcorn(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		return { point.x + x->affine.x * sin(tan(3 * point.y)), point.y + x->affine.y * sin(tan(3 * point.x)) };
+	}
+
+	static VG_INLINE Vec3<T> exponential(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		T coeff = exp(point.x - 1);
+		return { coeff * cos((T) M_PI * point.y), coeff * sin((T) M_PI * point.y) };
+	}
+
+	static VG_INLINE Vec3<T> power(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		T theta = atan2(point.x, point.y);
+		T sint = sin(theta);
+		T r = pow(point.x * point.x + point.y * point.y, sint / 2);
+		return { r * cos(theta), r * sint };
+	}
+
+	static VG_INLINE Vec3<T> cosine(Xform<T>* x, Variation<T>* v, Vec3<T> point) {
+		return { cos((T) M_PI * point.x) * cosh(point.y), -sin((T) M_PI * point.x) * sinh(point.y) };
+	}
+
 	typedef Vec3<T> (* Fn)(Xform<T>*, Variation<T>*, Vec3<T>);
 	static VG_INLINE Fn find(unsigned id) {
 		constexpr Fn t[]{
@@ -125,11 +150,11 @@ struct Variations {
 			julia,
 			bent,
 			waves,
-			// fisheye,
-			// popcorn,
-			// exponential,
-			// power,
-			// cosine,
+			fisheye,
+			popcorn,
+			exponential,
+			power,
+			cosine,
 			// rings,
 			// fan,
 			// blob,
