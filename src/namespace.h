@@ -36,6 +36,7 @@ struct Xform {
 struct BoardParams {
 	unsigned long quality;
 	unsigned iterations;
+	float brightness;
 	unsigned w;
 	unsigned h;
 	float proj[3][3];

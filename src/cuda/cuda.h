@@ -1,9 +1,8 @@
 #pragma once
 #include "namespace.h"
 
-#define POINTS 4
 #define N 1024
-#define BLOCKS 16
+#define BLOCKS 32
 
 namespace Variegator {
 namespace Cuda {
