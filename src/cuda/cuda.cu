@@ -78,10 +78,10 @@ __device__ void update_board(BoardParams* params, Vec3<T>* points, float4* board
 		}
 		Vec3<T> colors = points[i * 2 + 1];
 		uchar3 color = make_uchar3(colors.x * 256, colors.y * 256, colors.z * 256);
-		board[x + y * params->w].x += params->palette[color.x].x;
-		board[x + y * params->w].y += params->palette[color.y].y;
-		board[x + y * params->w].z += params->palette[color.z].z;
-		board[x + y * params->w].w++;
+		atomicAdd(&board[x + y * params->w].x, params->palette[color.x].x);
+		atomicAdd(&board[x + y * params->w].y, params->palette[color.y].y);
+		atomicAdd(&board[x + y * params->w].z, params->palette[color.z].z);
+		atomicAdd(&board[x + y * params->w].w, 1);
 	}
 }
 
@@ -105,11 +105,14 @@ __global__ void flatten_board(BoardParams* params, float4* board, U* out) {
 
 template<typename T>
 __global__ void run(Xform<T>* xforms, unsigned n_xforms, BoardParams* board_params, Vec3<T>* points, float4* board, ulong steps) {
-	for (unsigned i = 0; i < n_xforms; ++i) {
-		for (unsigned j = 0; j < xforms[i].n_variations; ++j) {
-			xforms[i].variations[j].fn = Variations<T>::find(xforms[i].variations[j].id);
+	if (threadIdx.x == 0) {
+		for (unsigned i = 0; i < n_xforms; ++i) {
+			for (unsigned j = 0; j < xforms[i].n_variations; ++j) {
+				xforms[i].variations[j].fn = Variations<T>::find(xforms[i].variations[j].id);
+			}
 		}
 	}
+	__syncthreads();
 	points = &points[(threadIdx.x + blockIdx.x * blockDim.x) * POINTS * 2];
 	initialize_points(points);
 	for (unsigned i = 0; i < 20; ++i) {
