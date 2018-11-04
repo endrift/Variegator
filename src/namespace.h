@@ -21,7 +21,7 @@ struct Variation {
 	int id;
 	Vec3<T> weight;
 	T params[4];
-	Vec3<T> (*fn)(struct Xform<T>* x, Variation<T>* v, Vec3<T> point);
+	Vec3<T> (*fn)(const struct Xform<T>* x, const Variation<T>* v, Vec3<T> point);
 };
 
 template<typename T>

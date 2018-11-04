@@ -31,8 +31,8 @@ __global__ void seed_lcg(ulong seed) {
 }
 
 template<typename T>
-__device__ void iterate(Xform<T>* xforms, uint n_xforms, Vec3<T>* points) {
-	Xform<T>* x = &xforms[rand32() % n_xforms];
+__device__ void iterate(const Xform<T>* xforms, uint n_xforms, Vec3<T>* points) {
+	const Xform<T>* x = &xforms[rand32() % n_xforms];
 	for (unsigned i = 0; i < POINTS; ++i) {
 		Vec3<T> point;
 		Vec3<T> color;
@@ -46,7 +46,7 @@ __device__ void iterate(Xform<T>* xforms, uint n_xforms, Vec3<T>* points) {
 
 		Vec3<T> out;
 		for (unsigned j = 0; j < x->n_variations; ++j) {
-			Variation<T>* v = &x->variations[j];
+			const Variation<T>* v = &x->variations[j];
 			Vec3<T> tmp = v->fn(x, v, point);
 			out.x += v->weight.x * tmp.x;
 			out.y += v->weight.y * tmp.y;
@@ -69,7 +69,7 @@ __device__ void initialize_points(Vec3<T>* points) {
 }
 
 template<typename T>
-__device__ void update_board(BoardParams* params, Vec3<T>* points, float4* board) {
+__device__ void update_board(const BoardParams* params, const Vec3<T>* points, float4* board) {
 	for (unsigned i = 0; i < POINTS; ++i) {
 		int x = (int) (points[i * 2].x * params->proj[0][0] + points[i * 2].y * params->proj[1][0] + points[i * 2].z * params->proj[2][0] + params->affine.x);
 		int y = (int) (points[i * 2].x * params->proj[0][1] + points[i * 2].y * params->proj[1][1] + points[i * 2].z * params->proj[2][1] + params->affine.y);
@@ -86,7 +86,7 @@ __device__ void update_board(BoardParams* params, Vec3<T>* points, float4* board
 }
 
 template<typename U>
-__global__ void flatten_board(BoardParams* params, float4* board, U* out) {
+__global__ void flatten_board(const BoardParams* params, const float4* board, U* out) {
 	float k2 = 1.f / params->quality;
 	float k1 = 1.f;
 	for (unsigned y = threadIdx.x * params->h / blockDim.x; y < (threadIdx.x + 1) * params->h / blockDim.x; ++y) {
@@ -104,7 +104,7 @@ __global__ void flatten_board(BoardParams* params, float4* board, U* out) {
 }
 
 template<typename T>
-__global__ void run(Xform<T>* xforms, unsigned n_xforms, BoardParams* board_params, Vec3<T>* points, float4* board, ulong steps) {
+__global__ void run(Xform<T>* xforms, unsigned n_xforms, const BoardParams* board_params, Vec3<T>* points, float4* board, ulong steps) {
 	if (threadIdx.x == 0) {
 		for (unsigned i = 0; i < n_xforms; ++i) {
 			for (unsigned j = 0; j < xforms[i].n_variations; ++j) {
@@ -124,11 +124,11 @@ __global__ void run(Xform<T>* xforms, unsigned n_xforms, BoardParams* board_para
 	}
 }
 
-template __global__ void run<float>(Xform<float>*, unsigned, BoardParams*, Vec3<float>*, float4*, ulong);
-template __global__ void run<double>(Xform<double>*, unsigned, BoardParams*, Vec3<double>*, float4*, ulong);
+template __global__ void run<float>(Xform<float>*, unsigned, const BoardParams*, Vec3<float>*, float4*, ulong);
+template __global__ void run<double>(Xform<double>*, unsigned, const BoardParams*, Vec3<double>*, float4*, ulong);
 
-template __global__ void flatten_board<unsigned short>(BoardParams* params, float4* board, unsigned short* out);
-template __global__ void flatten_board<unsigned char>(BoardParams* params, float4* board, unsigned char* out);
+template __global__ void flatten_board<unsigned short>(const BoardParams* params, const float4* board, unsigned short* out);
+template __global__ void flatten_board<unsigned char>(const BoardParams* params, const float4* board, unsigned char* out);
 
 }
 }
